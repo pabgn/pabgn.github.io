@@ -39,6 +39,7 @@
             opacity: 0;
             transition: opacity 1s ease-in-out;
             z-index: 1000;
+            size: 30px;
         }
 
         /* Responsive adjustments */
@@ -62,28 +63,26 @@
 <div id="scanner-container"></div>
 <div id="green-splash" class="splash-screen" style="background-color: green;">Acceso correcto</div>
 <div id="red-splash" class="splash-screen" style="background-color: red;">Acceso denegado</div>
-
 <script type="module">
     import QRScanner from 'https://nimiq.github.io/qr-scanner/qr-scanner.min.js';
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchInvitados().then(() => {
-            startQRScanner();
-        });
+    document.addEventListener('DOMContentLoaded', async () => {
+        await fetchInvitados();
+        startQRScanner();
     });
 
     QRScanner.WORKER_PATH = 'https://nimiq.github.io/qr-scanner/qr-scanner-worker.min.js';
     let qrScanner;
-    let invitados = []; // Store the list of guests
-    let scannedQRs = new Set(); // Keep track of scanned QR codes
-    let isScanningPaused = false; // Flag to control scanning
+    let invitados = [];
+    let scannedQRs = new Set();
+    let isScanningPaused = false;
 
     async function fetchInvitados() {
-        let url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados';
+        const url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados';
         try {
             const response = await fetch(url);
             const json = await response.json();
-            invitados = json.invitados; // Store the fetched guests
+            invitados = json.invitados;
         } catch (error) {
             console.error('Error fetching invitados:', error);
         }
@@ -92,77 +91,65 @@
     function startQRScanner() {
         const videoElement = document.createElement('video');
         document.getElementById('scanner-container').appendChild(videoElement);
-        qrScanner = new QRScanner(videoElement, result => validateQRCode(result), {
+        qrScanner = new QRScanner(videoElement, result => {
+            if (result) validateQRCode(result.data);
+        }, {
             highlightScanRegion: true,
-            highlightCodeOutline: true
+            highlightCodeOutline: true,
+            returnDetailedScanResult: true,
         });
 
-        qrScanner.start();
+        qrScanner.start().catch((error) => {
+            if (!error.message.includes("No QR code found")) {
+                console.error(`Scanner error: ${error}`);
+            }
+        });
     }
-
-
-    document.getElementById('scanner-container').style.height = '100vh'; // Ensure the scanner covers the full viewport height
-
-   
-
-
 
     function validateQRCode(scannedCode) {
-        if (isScanningPaused) return; // Prevent processing if scanning is paused
-        isScanningPaused = true; // Pause scanning to process this QR code
+        if (isScanningPaused || scannedQRs.has(scannedCode)) return;
+        isScanningPaused = true;
 
-        if (scannedQRs.has(scannedCode)) {
-            showSplashScreen(false);
+        const invitado = invitados.find(invitado => invitado.qrCode.toString() === scannedCode && invitado.status === "VALID");
+        if (invitado) {
+            scannedQRs.add(scannedCode);
+            updateInvitadoStatus(invitado.id, invitado.nombre);
         } else {
-            const invitado = invitados.find(invitado => invitado.qrCode.toString() === scannedCode && invitado.status === "VALID");
-            if (invitado) {
-                scannedQRs.add(scannedCode);
-                updateInvitadoStatus(invitado.id); // Update invitado status to "REDEEMED"
-                showSplashScreen(true);
-            } else {
-                showSplashScreen(false);
-            }
+            showSplashScreen(false);
         }
-
-        // Resume scanning after a delay
-        setTimeout(() => isScanningPaused = false, 3000);
     }
 
-    function updateInvitadoStatus(id) {
+    function updateInvitadoStatus(id, nombre) {
         const url = `https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados/${id}`;
-        const invitadoToUpdate = invitados.find(invitado => invitado.id === id);
-        if (!invitadoToUpdate) return;
-
-        invitadoToUpdate.status = "REDEEMED"; // Change status to "REDEEMED"
+        const body = { invitado: { status: "REDEEMED" } };
 
         fetch(url, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ invitado: invitadoToUpdate })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        .then(() => showSplashScreen(true, nombre))
+        .catch(error => console.error('Error:', error));
     }
 
-    function showSplashScreen(isValid) {
+    function showSplashScreen(isValid, nombre = '') {
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
+        splash.innerHTML = isValid ? `Bienvenido: ${nombre}!` : 'Acceso denegado';
         splash.style.display = 'flex';
         setTimeout(() => {
             splash.style.opacity = 1;
             setTimeout(() => {
                 splash.style.opacity = 0;
-                setTimeout(() => splash.style.display = 'none', 1500);
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    splash.innerHTML = '';
+                    if (isValid) isScanningPaused = false;
+                }, 1000);
             }, 1000);
         }, 10);
     }
 </script>
+
 
 </body>
 </html>
