@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Caspe Scan</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        /* Styles for the header */
+        .header {
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        /* Adjust the video element to cover the whole page */
+        video {
+            width: 100%;
+            height: calc(100% - 50px); /* Adjust based on the header height */
+            object-fit: cover;
+        }
+        /* Styles for the splash screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <img src="logo.svg" alt="Logo" style="height: 30px;"> <!-- Replace logo-url-here.png with your logo URL -->
+</div>
+<div id="scanner-container"></div>
+<div id="green-splash" class="splash-screen" style="background-color: green;">Welcome!</div>
+<div id="red-splash" class="splash-screen" style="background-color: red;">Access Denied</div>
+
+<script type="module">
+    import QRScanner from 'https://nimiq.github.io/qr-scanner/qr-scanner.min.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchInvitados().then(() => {
+            startQRScanner();
+        });
+    });
+
+    QRScanner.WORKER_PATH = 'https://nimiq.github.io/qr-scanner/qr-scanner-worker.min.js';
+    let qrScanner;
+    let invitados = []; // Store the list of guests
+    let scannedQRs = new Set(); // Keep track of scanned QR codes
+    let isScanningPaused = false; // Flag to control scanning
+
+    async function fetchInvitados() {
+        let url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados';
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            invitados = json.invitados; // Store the fetched guests
+        } catch (error) {
+            console.error('Error fetching invitados:', error);
+        }
+    }
+
+    function startQRScanner() {
+        const videoElement = document.createElement('video');
+        document.getElementById('scanner-container').appendChild(videoElement);
+        qrScanner = new QRScanner(videoElement, result => validateQRCode(result), {
+            highlightScanRegion: true,
+            highlightCodeOutline: true
+        });
+
+        qrScanner.start();
+    }
+
+
+    document.getElementById('scanner-container').style.height = '100vh'; // Ensure the scanner covers the full viewport height
+
+   
+
+
+
+    function validateQRCode(scannedCode) {
+        if (isScanningPaused) return; // Prevent processing if scanning is paused
+        isScanningPaused = true; // Pause scanning to process this QR code
+
+        if (scannedQRs.has(scannedCode)) {
+            showSplashScreen(false);
+        } else {
+            const invitado = invitados.find(invitado => invitado.qrCode.toString() === scannedCode && invitado.status === "VALID");
+            if (invitado) {
+                scannedQRs.add(scannedCode);
+                updateInvitadoStatus(invitado.id); // Update invitado status to "REDEEMED"
+                showSplashScreen(true);
+            } else {
+                showSplashScreen(false);
+            }
+        }
+
+        // Resume scanning after a delay
+        setTimeout(() => isScanningPaused = false, 3000);
+    }
+
+    function updateInvitadoStatus(id) {
+        const url = `https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados/${id}`;
+        const invitadoToUpdate = invitados.find(invitado => invitado.id === id);
+        if (!invitadoToUpdate) return;
+
+        invitadoToUpdate.status = "REDEEMED"; // Change status to "REDEEMED"
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ invitado: invitadoToUpdate })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    function showSplashScreen(isValid) {
+        const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
+        splash.style.display = 'flex';
+        setTimeout(() => {
+            splash.style.opacity = 1;
+            setTimeout(() => {
+                splash.style.opacity = 0;
+                setTimeout(() => splash.style.display = 'none', 1000);
+            }, 1000);
+        }, 10);
+    }
+</script>
+
+</body>
+</html>
