@@ -10,6 +10,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
+            background-color: black;
             overflow: hidden;
             font-family: Arial, Helvetica, sans-serif;
         }
@@ -141,7 +142,7 @@
     function showSplashScreen(isValid, nombre = '') {
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
         splash.style.display = 'flex';
-        splash.innerHTML = isValid ? `Welcome, ${nombre}!` : 'Access Denied';
+        splash.innerHTML = isValid ? `Bienvenido, ${nombre}!` : 'Invitado ya registrado';
         setTimeout(() => {
             splash.style.opacity = 1;
             setTimeout(() => {
