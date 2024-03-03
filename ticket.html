@@ -16,7 +16,7 @@
         #pdfViewer iframe {
             width: 100%;
             height: 100%;
-            border: none; /* Removes the default border around iframe */
+            border: none; 
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.16.0/dist/pdf-lib.min.js"></script>
@@ -82,6 +82,8 @@
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             displayPDF(url);
+            downloadPDF(blob, 'caspe-invitation.pdf');
+
         }
     });
 
@@ -90,6 +92,17 @@
         iframe.src = pdfUrl;
         document.getElementById('pdfViewer').appendChild(iframe);
     }
+
+    function downloadPDF(blob, filename) {
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
 </script>
 
 </body>
