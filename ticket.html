@@ -34,11 +34,8 @@
 
         if (code && name) {
             const qrCodeDataURL = await QRCode.toDataURL(code, {
-                margin: 0,
-                color: {
-                dark: "#ffffff",  // Black color for QR code
-                light: "#000000"    // Transparent background
-                }
+                margin: 2
+                
             });
             const existingPdfBytes = await fetch('invitacion.pdf').then(res => res.arrayBuffer());
             const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
