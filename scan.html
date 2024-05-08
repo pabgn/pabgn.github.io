@@ -84,7 +84,7 @@
             const response = await fetch(url);
             const json = await response.json();
             invitados = json.invitados.reduce((acc, invitado) => {
-                acc[invitado.qrCode] = invitado;
+                acc[invitado.code] = invitado;
                 return acc;
             }, {});
         } catch (error) {
