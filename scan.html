@@ -128,9 +128,21 @@
         }
     }
 
+    function getCurrentDateTime() {
+        const now = new Date();
+        const date = now.toLocaleDateString('en-US');
+        const time = now.toLocaleTimeString('en-US', { hour12: false });
+        return `${date} ${time}`;
+    }
+
     function updateInvitadoStatus(id, nombre) {
         const url = `https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados/${id}`;
-        const body = { invitado: { status: "REDEEMED" } };
+        const body = { 
+            invitado: { 
+                status: "REDEEMED",
+                redeemed: getCurrentDateTime() 
+            } 
+        };
 
         fetch(url, {
             method: 'PUT',
@@ -140,7 +152,6 @@
         .then(() => showSplashScreen(true, nombre))
         .catch(error => console.error('Error:', error));
     }
-
     function showSplashScreen(isValid, nombre = '') {
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
         splash.style.display = 'flex';
