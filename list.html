@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Entrada de Invitado - Caspe</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+        }
+        #pdfViewer {
+            height: 100%;
+        }
+        #pdfViewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none; 
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.16.0/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+
+<div id="pdfViewer"></div>
+
+<script>
+    window.addEventListener('load', async function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const name = urlParams.get('name');
+
+        if (code && name) {
+            const qrCodeDataURL = await QRCode.toDataURL(code, {
+                margin: 2
+                
+            });
+            const existingPdfBytes = await fetch('lista.pdf').then(res => res.arrayBuffer());
+            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+            const qrImage = await pdfDoc.embedPng(qrCodeDataURL);
+            const page = pdfDoc.getPage(0);
+
+            page.drawImage(qrImage, {
+                x: 166,
+                y: 436,
+                width: 43,
+                height: 43
+            });
+
+            page.drawImage(qrImage, {
+                x: 503,
+                y: 766,
+                width: 56,
+                height: 56
+            });
+
+            const latoFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold); // Replace with actual Lato Bold font if available
+
+            page.drawText(name, {
+                x: 36,
+                y: 470,
+                size: 9,
+                font: latoFont,
+                color: PDFLib.rgb(1, 1, 1)
+            });
+
+            // Add text for 'code'
+            page.drawText(code, {
+                x: 36,
+                y: 433,
+                size: 12,
+                font: latoFont,
+                color: PDFLib.rgb(1, 1, 1)
+            });
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            displayPDF(url);
+            downloadPDF(blob, 'caspe-lista.pdf');
+
+        }
+    });
+
+    function displayPDF(pdfUrl) {
+        const iframe = document.createElement('iframe');
+        iframe.src = pdfUrl;
+        document.getElementById('pdfViewer').appendChild(iframe);
+    }
+
+    function downloadPDF(blob, filename) {
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+</script>
+
+</body>
+</html>
