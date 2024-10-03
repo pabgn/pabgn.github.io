@@ -31,6 +31,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         const name = urlParams.get('name');
+        const surname = urlParams.get('surname');
 
         if (code && name) {
             const qrCodeDataURL = await QRCode.toDataURL(code, {
@@ -58,7 +59,7 @@
 
             const latoFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold); // Replace with actual Lato Bold font if available
 
-            page.drawText(name, {
+            page.drawText(name+' '+surname, {
                 x: 36,
                 y: 470,
                 size: 9,
