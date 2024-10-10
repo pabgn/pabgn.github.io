@@ -94,9 +94,13 @@
     let invitados = [];
     const startButton = document.getElementById('start-button');
     let splashTimeout;
+    let audioContext;
+    let correctBuffer;
+    let wrongBuffer;
 
     startButton.addEventListener('click', async () => {
         await fetchInvitados();
+        await initializeAudio();
         startQRScanner();
         startButton.style.display = 'none';
     });
@@ -178,16 +182,41 @@
         .catch(error => console.error('Error:', error));
     }
 
+    async function initializeAudio() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        try {
+            const [correctResponse, wrongResponse] = await Promise.all([
+                fetch('correct.mp3'),
+                fetch('error.mp3')
+            ]);
+            const [correctArrayBuffer, wrongArrayBuffer] = await Promise.all([
+                correctResponse.arrayBuffer(),
+                wrongResponse.arrayBuffer()
+            ]);
+            [correctBuffer, wrongBuffer] = await Promise.all([
+                audioContext.decodeAudioData(correctArrayBuffer),
+                audioContext.decodeAudioData(wrongArrayBuffer)
+            ]);
+        } catch (error) {
+            console.error('Error loading audio:', error);
+        }
+    }
+    function playSound(isCorrect) {
+        if (audioContext && (isCorrect ? correctBuffer : wrongBuffer)) {
+            const source = audioContext.createBufferSource();
+            source.buffer = isCorrect ? correctBuffer : wrongBuffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+        }
+    }
+
     function showSplashScreen(isValid, nombre = '') {
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
-        const sound = document.getElementById(isValid ? 'correct-sound' : 'wrong-sound');
         splash.style.display = 'flex';
-        splash.innerHTML = isValid ? `Entrada válida: ${nombre}` : 'Entrada ya canjeada';
+        splash.innerHTML = isValid ? `Bienvenido, ${nombre}!` : 'Invitado ya registrado';
         
-        // Play sound with error handling
-        sound.play().catch(error => {
-            console.warn('Audio playback failed:', error);
-        });
+        // Play sound using Web Audio API
+        playSound(isValid);
 
         // Clear any existing timeout
         if (splashTimeout) {
