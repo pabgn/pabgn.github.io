@@ -17,16 +17,26 @@
             font-family: Arial, Helvetica, sans-serif;
         }
         .header {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            background-color: black;
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
             text-align: center;
             padding: 10px 0;
-            box-sizing: border-box; /* Ensures padding is included in the total width and height */
+            z-index: 10;
+        }
+        #scanner-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
         video {
             width: 100%;
-            height: calc(100% - 60px); /* Adjust based on the header height */
+            height: 100%;
             object-fit: cover;
         }
         .splash-screen {
@@ -41,20 +51,30 @@
             color: white;
             font-size: 2em;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 0.5s ease-in-out;
             z-index: 1000;
         }
-
+        #start-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 20;
+        }
         /* Responsive adjustments */
         @media (max-width: 600px) {
             .header img {
-                height: 20px; /* Smaller logo on smaller screens */
+                height: 20px;
             }
             .header {
-                padding: 5px 0; /* Less padding on smaller screens */
-            }
-            video {
-                height: calc(100% - 30px); /* Adjust the video height for smaller header */
+                padding: 5px 0;
             }
         }
     </style>
@@ -64,19 +84,25 @@
     <img src="logo.svg" alt="Logo" style="height: 30px;">
 </div>
 <div id="scanner-container"></div>
-<div id="green-splash" class="splash-screen" style="background-color: green;">Acceso correcto</div>
-<div id="red-splash" class="splash-screen" style="background-color: red;">Acceso denegado</div>
+<div id="green-splash" class="splash-screen" style="background-color: rgba(0, 255, 0, 0.7);">Acceso correcto</div>
+<div id="red-splash" class="splash-screen" style="background-color: rgba(255, 0, 0, 0.7);">Acceso denegado</div>
+<audio id="correct-sound" src="correct.mp3"></audio>
+<audio id="wrong-sound" src="error.mp3"></audio>
+<button id="start-button">Iniciar cámara</button>
 <script type="module">
     import QRScanner from 'https://nimiq.github.io/qr-scanner/qr-scanner.min.js';
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    let qrScanner;
+    let invitados = [];
+    const startButton = document.getElementById('start-button');
+
+    startButton.addEventListener('click', async () => {
         await fetchInvitados();
         startQRScanner();
+        startButton.style.display = 'none';
     });
 
     QRScanner.WORKER_PATH = 'https://nimiq.github.io/qr-scanner/qr-scanner-worker.min.js';
-    let qrScanner;
-    let invitados = [];
 
     async function fetchInvitados() {
         const url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados';
@@ -97,7 +123,7 @@
         document.getElementById('scanner-container').appendChild(videoElement);
         qrScanner = new QRScanner(videoElement, (result) => {
             if (result && result.data && !qrScanner.isScanningPaused) {
-                qrScanner.isScanningPaused = true; // Ensure QR code processing runs only once
+                qrScanner.isScanningPaused = true;
                 validateQRCode(result.data);
             }
         }, {
@@ -115,14 +141,14 @@
             }
         });
 
-        qrScanner.hasScanned = false; // Flag to check if a QR code has been scanned
+        qrScanner.hasScanned = false;
     }
 
     function validateQRCode(scannedCode) {
         const invitado = invitados[scannedCode];
         if (invitado && invitado.status === "VALID") {
             updateInvitadoStatus(invitado.id, invitado.nombre);
-            invitados[scannedCode].status = "REDEEMED"; // Update local object status
+            invitados[scannedCode].status = "REDEEMED";
         } else {
             showSplashScreen(false);
         }
@@ -152,19 +178,27 @@
         .then(() => showSplashScreen(true, nombre))
         .catch(error => console.error('Error:', error));
     }
+
     function showSplashScreen(isValid, nombre = '') {
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
+        const sound = document.getElementById(isValid ? 'correct-sound' : 'wrong-sound');
         splash.style.display = 'flex';
         splash.innerHTML = isValid ? `Bienvenido, ${nombre}!` : 'Invitado ya registrado';
+        
+        // Play sound with error handling
+        sound.play().catch(error => {
+            console.warn('Audio playback failed:', error);
+        });
+
         setTimeout(() => {
             splash.style.opacity = 1;
             setTimeout(() => {
                 splash.style.opacity = 0;
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    qrScanner.isScanningPaused = false; // Allow new scans
-                }, 1000);
-            }, 1000);
+                    qrScanner.isScanningPaused = false;
+                }, 500);
+            }, 2000);
         }, 10);
     }
 </script>
