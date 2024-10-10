@@ -50,8 +50,6 @@
             justify-content: center;
             color: white;
             font-size: 2em;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
             z-index: 1000;
         }
         #start-button {
@@ -95,6 +93,7 @@
     let qrScanner;
     let invitados = [];
     const startButton = document.getElementById('start-button');
+    let splashTimeout;
 
     startButton.addEventListener('click', async () => {
         await fetchInvitados();
@@ -183,23 +182,29 @@
         const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
         const sound = document.getElementById(isValid ? 'correct-sound' : 'wrong-sound');
         splash.style.display = 'flex';
-        splash.innerHTML = isValid ? `Bienvenido, ${nombre}!` : 'Invitado ya registrado';
+        splash.innerHTML = isValid ? `Entrada válida: ${nombre}` : 'Entrada ya canjeada';
         
         // Play sound with error handling
         sound.play().catch(error => {
             console.warn('Audio playback failed:', error);
         });
 
-        setTimeout(() => {
-            splash.style.opacity = 1;
-            setTimeout(() => {
-                splash.style.opacity = 0;
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    qrScanner.isScanningPaused = false;
-                }, 500);
-            }, 2000);
-        }, 10);
+        // Clear any existing timeout
+        if (splashTimeout) {
+            clearTimeout(splashTimeout);
+        }
+
+        // Set up touch event listener
+        const hideSplash = () => {
+            splash.style.display = 'none';
+            qrScanner.isScanningPaused = false;
+            document.removeEventListener('touchstart', hideSplash);
+        };
+
+        document.addEventListener('touchstart', hideSplash);
+
+        // Set up automatic hide after 3 seconds
+        splashTimeout = setTimeout(hideSplash, 3000);
     }
 </script>
 </body>
