@@ -50,6 +50,7 @@
             justify-content: center;
             color: white;
             font-size: 2em;
+            text-align: center;
             z-index: 1000;
         }
         #start-button {
@@ -66,7 +67,10 @@
             cursor: pointer;
             z-index: 20;
         }
-        /* Responsive adjustments */
+        /* New orange splash screen */
+        #orange-splash {
+            background-color: rgba(255, 140, 0, 0.7);
+        }
         @media (max-width: 600px) {
             .header img {
                 height: 20px;
@@ -83,23 +87,27 @@
 </div>
 <div id="scanner-container"></div>
 <div id="green-splash" class="splash-screen" style="background-color: rgba(0, 255, 0, 0.7);">Acceso correcto</div>
+<div id="orange-splash" class="splash-screen">Pendiente de pago</div>
 <div id="red-splash" class="splash-screen" style="background-color: rgba(255, 0, 0, 0.7);">Acceso denegado</div>
 <audio id="correct-sound" src="correct.mp3"></audio>
+<audio id="cashier-sound" src="cashier.mp3"></audio>
 <audio id="wrong-sound" src="error.mp3"></audio>
 <button id="start-button">Iniciar cámara</button>
 <script type="module">
     import QRScanner from 'https://nimiq.github.io/qr-scanner/qr-scanner.min.js';
 
     let qrScanner;
-    let invitados = [];
+    let invitados = {};
+    let lista = {};
     const startButton = document.getElementById('start-button');
     let splashTimeout;
     let audioContext;
     let correctBuffer;
     let wrongBuffer;
+    let cashierBuffer;
 
     startButton.addEventListener('click', async () => {
-        await fetchInvitados();
+        await Promise.all([fetchInvitados(), fetchLista()]);
         await initializeAudio();
         startQRScanner();
         startButton.style.display = 'none';
@@ -118,6 +126,20 @@
             }, {});
         } catch (error) {
             console.error('Error fetching invitados:', error);
+        }
+    }
+
+    async function fetchLista() {
+        const url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/lista';
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            lista = json.lista.reduce((acc, person) => {
+                acc[person.code] = person;
+                return acc;
+            }, {});
+        } catch (error) {
+            console.error('Error fetching lista:', error);
         }
     }
 
@@ -149,11 +171,16 @@
 
     function validateQRCode(scannedCode) {
         const invitado = invitados[scannedCode];
+        const listaPerson = lista[scannedCode];
+
         if (invitado && invitado.status === "VALID") {
-            updateInvitadoStatus(invitado.id, invitado.nombre);
+            updateInvitadoStatus(invitado.id, invitado.nombre, 'invitados');
             invitados[scannedCode].status = "REDEEMED";
+        } else if (listaPerson && listaPerson.status === "VALID") {
+            updateInvitadoStatus(listaPerson.id, `${listaPerson.nombre} ${listaPerson.apellido}`, 'lista');
+            lista[scannedCode].status = "REDEEMED";
         } else {
-            showSplashScreen(false);
+            showSplashScreen('invalid');
         }
     }
 
@@ -164,13 +191,19 @@
         return `${date} ${time}`;
     }
 
-    function updateInvitadoStatus(id, nombre) {
-        const url = `https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados/${id}`;
-        const body = { 
-            invitado: { 
-                status: "REDEEMED",
-                redeemed: getCurrentDateTime() 
-            } 
+    function updateInvitadoStatus(id, nombre, type) {
+        const baseUrl = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe';
+        const url = `${baseUrl}/${type}/${id}`;
+        
+        // Create the correct body structure based on type
+        const bodyData = {
+            status: "REDEEMED",
+            redeemed: getCurrentDateTime()
+        };
+
+        // Use the singular form as the root property
+        const body = {
+            [type === 'invitados' ? 'invitado' : 'lista']: bodyData
         };
 
         fetch(url, {
@@ -178,52 +211,83 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         })
-        .then(() => showSplashScreen(true, nombre))
+        .then(() => showSplashScreen(type, nombre))
         .catch(error => console.error('Error:', error));
     }
 
     async function initializeAudio() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         try {
-            const [correctResponse, wrongResponse] = await Promise.all([
+            const [correctResponse, wrongResponse, cashierResponse] = await Promise.all([
                 fetch('correct.mp3'),
-                fetch('error.mp3')
+                fetch('error.mp3'),
+                fetch('cashier.mp3')
             ]);
-            const [correctArrayBuffer, wrongArrayBuffer] = await Promise.all([
+            const [correctArrayBuffer, wrongArrayBuffer, cashierArrayBuffer] = await Promise.all([
                 correctResponse.arrayBuffer(),
-                wrongResponse.arrayBuffer()
+                wrongResponse.arrayBuffer(),
+                cashierResponse.arrayBuffer()
             ]);
-            [correctBuffer, wrongBuffer] = await Promise.all([
+            [correctBuffer, wrongBuffer, cashierBuffer] = await Promise.all([
                 audioContext.decodeAudioData(correctArrayBuffer),
-                audioContext.decodeAudioData(wrongArrayBuffer)
+                audioContext.decodeAudioData(wrongArrayBuffer),
+                audioContext.decodeAudioData(cashierArrayBuffer)
             ]);
         } catch (error) {
             console.error('Error loading audio:', error);
         }
     }
-    function playSound(isCorrect) {
-        if (audioContext && (isCorrect ? correctBuffer : wrongBuffer)) {
+
+    function playSound(type) {
+        if (!audioContext) return;
+        
+        let buffer;
+        switch(type) {
+            case 'invitados':
+                buffer = correctBuffer;
+                break;
+            case 'lista':
+                buffer = cashierBuffer;
+                break;
+            default:
+                buffer = wrongBuffer;
+        }
+
+        if (buffer) {
             const source = audioContext.createBufferSource();
-            source.buffer = isCorrect ? correctBuffer : wrongBuffer;
+            source.buffer = buffer;
             source.connect(audioContext.destination);
             source.start(0);
         }
     }
 
-    function showSplashScreen(isValid, nombre = '') {
-        const splash = document.getElementById(isValid ? 'green-splash' : 'red-splash');
-        splash.style.display = 'flex';
-        splash.innerHTML = isValid ? `Bienvenido, ${nombre}!` : 'Invitado ya registrado';
-        
-        // Play sound using Web Audio API
-        playSound(isValid);
+    function showSplashScreen(type, nombre = '') {
+        let splash;
+        let message = '';
 
-        // Clear any existing timeout
+        switch(type) {
+            case 'invitados':
+                splash = document.getElementById('green-splash');
+                message = `Bienvenido, ${nombre}!`;
+                break;
+            case 'lista':
+                splash = document.getElementById('orange-splash');
+                message = `${nombre}<br>Pendiente de pago`;
+                break;
+            default:
+                splash = document.getElementById('red-splash');
+                message = 'Usuario ya registrado o inválido';
+        }
+
+        splash.innerHTML = message;
+        splash.style.display = 'flex';
+        
+        playSound(type);
+
         if (splashTimeout) {
             clearTimeout(splashTimeout);
         }
 
-        // Set up touch event listener
         const hideSplash = () => {
             splash.style.display = 'none';
             qrScanner.isScanningPaused = false;
@@ -231,8 +295,6 @@
         };
 
         document.addEventListener('touchstart', hideSplash);
-
-        // Set up automatic hide after 3 seconds
         splashTimeout = setTimeout(hideSplash, 3000);
     }
 </script>
