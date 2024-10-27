@@ -177,7 +177,7 @@
             updateInvitadoStatus(invitado.id, invitado.nombre, 'invitados');
             invitados[scannedCode].status = "REDEEMED";
         } else if (listaPerson && listaPerson.status === "VALID") {
-            updateInvitadoStatus(listaPerson.id, `${listaPerson.name} ${listaPerson.surnames}`, 'lista');
+            updateInvitadoStatus(listaPerson.id, `${listaPerson.name} ${listaPerson.surname}`, 'lista');
             lista[scannedCode].status = "REDEEMED";
         } else {
             showSplashScreen('invalid');
