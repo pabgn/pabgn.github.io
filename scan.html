@@ -175,13 +175,13 @@
 
         if (invitado && invitado.status === "VALID") {
             // Show splash screen immediately
-            showSplashScreen('invitados', invitado.nombre);
+            showSplashScreen('invitados');
             // Update in background
             updateInvitadoStatus(invitado.id, 'invitados');
             invitados[scannedCode].status = "REDEEMED";
         } else if (listaPerson && listaPerson.status === "VALID") {
             // Show splash screen immediately
-            showSplashScreen('lista', `${listaPerson.name} ${listaPerson.surname}`);
+            showSplashScreen('lista');
             // Update in background
             updateInvitadoStatus(listaPerson.id, 'lista');
             lista[scannedCode].status = "REDEEMED";
@@ -269,25 +269,22 @@
 
     function showSplashScreen(type, nombre = '') {
         let splash;
-        let message = '';
 
         switch(type) {
             case 'invitados':
                 splash = document.getElementById('green-splash');
-                message = `Bienvenido, ${nombre}!`;
                 break;
             case 'lista':
                 splash = document.getElementById('orange-splash');
-                message = `${nombre}<br>Pendiente de pago`;
                 break;
             default:
                 splash = document.getElementById('red-splash');
-                message = 'Usuario ya registrado o inválido';
         }
 
-        splash.innerHTML = message;
+        // Show splash immediately without DOM manipulation
         splash.style.display = 'flex';
-        
+
+        // Play sound immediately
         playSound(type);
 
         if (splashTimeout) {
