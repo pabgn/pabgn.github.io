@@ -174,10 +174,16 @@
         const listaPerson = lista[scannedCode];
 
         if (invitado && invitado.status === "VALID") {
-            updateInvitadoStatus(invitado.id, invitado.nombre, 'invitados');
+            // Show splash screen immediately
+            showSplashScreen('invitados', invitado.nombre);
+            // Update in background
+            updateInvitadoStatus(invitado.id, 'invitados');
             invitados[scannedCode].status = "REDEEMED";
         } else if (listaPerson && listaPerson.status === "VALID") {
-            updateInvitadoStatus(listaPerson.id, `${listaPerson.name} ${listaPerson.surname}`, 'lista');
+            // Show splash screen immediately
+            showSplashScreen('lista', `${listaPerson.name} ${listaPerson.surname}`);
+            // Update in background
+            updateInvitadoStatus(listaPerson.id, 'lista');
             lista[scannedCode].status = "REDEEMED";
         } else {
             showSplashScreen('invalid');
@@ -191,10 +197,10 @@
         return `${date} ${time}`;
     }
 
-    function updateInvitadoStatus(id, nombre, type) {
+    function updateInvitadoStatus(id, type) {
         const baseUrl = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe';
         const url = `${baseUrl}/${type}/${id}`;
-        
+
         // Create the correct body structure based on type
         const bodyData = {
             status: "REDEEMED",
@@ -206,13 +212,13 @@
             [type === 'invitados' ? 'invitado' : 'lista']: bodyData
         };
 
+        // Fire and forget - update in background
         fetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         })
-        .then(() => showSplashScreen(type, nombre))
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error updating status:', error));
     }
 
     async function initializeAudio() {
