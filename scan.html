@@ -97,17 +97,19 @@
     import QRScanner from 'https://nimiq.github.io/qr-scanner/qr-scanner.min.js';
 
     let qrScanner;
-    let invitados = {};
-    let lista = {};
+    let codesData = {};
     const startButton = document.getElementById('start-button');
+    const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwgr502kGqwbbswugaGqJv_UKgMMTc-nt76Vj_eFKY9jSKxkbc2aAo8ObEaMdIPVgEC/exec';
     let splashTimeout;
     let audioContext;
     let correctBuffer;
     let wrongBuffer;
     let cashierBuffer;
 
+    // Load all codes immediately when the app starts
+    fetchAllCodes();
+
     startButton.addEventListener('click', async () => {
-        await Promise.all([fetchInvitados(), fetchLista()]);
         await initializeAudio();
         startQRScanner();
         startButton.style.display = 'none';
@@ -115,31 +117,23 @@
 
     QRScanner.WORKER_PATH = 'https://nimiq.github.io/qr-scanner/qr-scanner-worker.min.js';
 
-    async function fetchInvitados() {
-        const url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/invitados';
+    async function fetchAllCodes() {
+        const url = `${API_BASE_URL}?action=getAll`;
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: 'GET',
+                redirect: 'follow'
+            });
             const json = await response.json();
-            invitados = json.invitados.reduce((acc, invitado) => {
-                acc[invitado.code] = invitado;
-                return acc;
-            }, {});
-        } catch (error) {
-            console.error('Error fetching invitados:', error);
-        }
-    }
 
-    async function fetchLista() {
-        const url = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe/lista';
-        try {
-            const response = await fetch(url);
-            const json = await response.json();
-            lista = json.lista.reduce((acc, person) => {
-                acc[person.code] = person;
-                return acc;
-            }, {});
+            if (json.success) {
+                codesData = json.data.reduce((acc, entry) => {
+                    acc[entry.code] = entry;
+                    return acc;
+                }, {});
+            }
         } catch (error) {
-            console.error('Error fetching lista:', error);
+            console.error('Error fetching codes:', error);
         }
     }
 
@@ -170,53 +164,47 @@
     }
 
     function validateQRCode(scannedCode) {
-        const invitado = invitados[scannedCode];
-        const listaPerson = lista[scannedCode];
+        const codeEntry = codesData[scannedCode];
 
-        if (invitado && invitado.status === "VALID") {
+        if (!codeEntry) {
+            // Code doesn't exist in the system
+            showSplashScreen('not-found');
+        } else if (codeEntry.status === "VALID") {
+            // Determine type based on 'rp' field
+            // If rp is not empty, it's invitados (green), otherwise lista (orange)
+            const type = codeEntry.rp ? 'invitados' : 'lista';
+
             // Show splash screen immediately
-            showSplashScreen('invitados');
+            showSplashScreen(type);
+
             // Update in background
-            updateInvitadoStatus(invitado.id, 'invitados');
-            invitados[scannedCode].status = "REDEEMED";
-        } else if (listaPerson && listaPerson.status === "VALID") {
-            // Show splash screen immediately
-            showSplashScreen('lista');
-            // Update in background
-            updateInvitadoStatus(listaPerson.id, 'lista');
-            lista[scannedCode].status = "REDEEMED";
+            redeemCode(scannedCode);
+
+            // Mark as redeemed locally
+            codesData[scannedCode].status = "REDEEMED";
         } else {
-            showSplashScreen('invalid');
+            // Code exists but already redeemed
+            showSplashScreen('already-used');
         }
     }
 
-    function getCurrentDateTime() {
-        const now = new Date();
-        const date = now.toLocaleDateString('en-US');
-        const time = now.toLocaleTimeString('en-US', { hour12: false });
-        return `${date} ${time}`;
-    }
-
-    function updateInvitadoStatus(id, type) {
-        const baseUrl = 'https://api.sheety.co/48dda9e8fe0826b07d12380c91e69b2d/caspe';
-        const url = `${baseUrl}/${type}/${id}`;
-
-        // Create the correct body structure based on type
-        const bodyData = {
-            status: "REDEEMED",
-            redeemed: getCurrentDateTime()
-        };
-
-        // Use the singular form as the root property
-        const body = {
-            [type === 'invitados' ? 'invitado' : 'lista']: bodyData
-        };
+    function redeemCode(code) {
+        const url = `${API_BASE_URL}?action=redeem&code=${code}`;
 
         // Fire and forget - update in background
         fetch(url, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+            method: 'POST',
+            redirect: 'follow'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Código redimido:', data.redeemedAt);
+            } else if (data.alreadyRedeemed) {
+                console.log('Ya estaba redimido:', data.redeemedAt);
+            } else {
+                console.error('Error redimiendo código:', data.error);
+            }
         })
         .catch(error => console.error('Error updating status:', error));
     }
@@ -269,6 +257,7 @@
 
     function showSplashScreen(type, nombre = '') {
         let splash;
+        const redSplash = document.getElementById('red-splash');
 
         switch(type) {
             case 'invitados':
@@ -277,11 +266,20 @@
             case 'lista':
                 splash = document.getElementById('orange-splash');
                 break;
+            case 'not-found':
+                splash = redSplash;
+                redSplash.innerHTML = 'Entrada no encontrada';
+                break;
+            case 'already-used':
+                splash = redSplash;
+                redSplash.innerHTML = 'Entrada ya utilizada';
+                break;
             default:
-                splash = document.getElementById('red-splash');
+                splash = redSplash;
+                redSplash.innerHTML = 'Acceso denegado';
         }
 
-        // Show splash immediately without DOM manipulation
+        // Show splash immediately
         splash.style.display = 'flex';
 
         // Play sound immediately

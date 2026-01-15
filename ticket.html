@@ -30,50 +30,85 @@
     window.addEventListener('load', async function() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        const name = urlParams.get('name');
 
-        if (code && name) {
-            const qrCodeDataURL = await QRCode.toDataURL(code, {
-                margin: 2
-                
+        if (!code) {
+            alert('No se proporcionó ningún código');
+            return;
+        }
+
+        try {
+            // Validate code via API
+            const apiUrl = `https://script.google.com/macros/s/AKfycbwgr502kGqwbbswugaGqJv_UKgMMTc-nt76Vj_eFKY9jSKxkbc2aAo8ObEaMdIPVgEC/exec?action=findByCode&code=${code}`;
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow'
             });
+            const data = await response.json();
+
+            if (!data.success) {
+                alert('Error: ' + data.error);
+                return;
+            }
+
+            // Load the base PDF template
             const existingPdfBytes = await fetch('invitacion.pdf').then(res => res.arrayBuffer());
-            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-            const qrImage = await pdfDoc.embedPng(qrCodeDataURL);
-            const page = pdfDoc.getPage(0);
+            const templatePdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
 
-            page.drawImage(qrImage, {
-                x: 166,
-                y: 436,
-                width: 43,
-                height: 43
-            });
+            // Create a new PDF document for all pages
+            const pdfDoc = await PDFLib.PDFDocument.create();
 
-            page.drawImage(qrImage, {
-                x: 503,
-                y: 766,
-                width: 56,
-                height: 56
-            });
+            // Embed font once for all pages
+            const latoFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
 
-            const latoFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold); // Replace with actual Lato Bold font if available
+            // Generate a page for each code
+            for (const ticketData of data.data) {
+                // Generate QR code for this ticket
+                const qrCodeDataURL = await QRCode.toDataURL(ticketData.code, {
+                    margin: 2
+                });
 
-            page.drawText(name, {
-                x: 36,
-                y: 470,
-                size: 9,
-                font: latoFont,
-                color: PDFLib.rgb(1, 1, 1)
-            });
+                // Copy the template page
+                const [copiedPage] = await pdfDoc.copyPages(templatePdfDoc, [0]);
 
-            // Add text for 'code'
-            page.drawText(code, {
-                x: 36,
-                y: 433,
-                size: 12,
-                font: latoFont,
-                color: PDFLib.rgb(1, 1, 1)
-            });
+                // Embed QR image
+                const qrImage = await pdfDoc.embedPng(qrCodeDataURL);
+
+                // Draw QR code in both positions
+                copiedPage.drawImage(qrImage, {
+                    x: 166,
+                    y: 436,
+                    width: 43,
+                    height: 43
+                });
+
+                copiedPage.drawImage(qrImage, {
+                    x: 503,
+                    y: 766,
+                    width: 56,
+                    height: 56
+                });
+
+                // Draw name
+                copiedPage.drawText(ticketData.nombre, {
+                    x: 36,
+                    y: 470,
+                    size: 9,
+                    font: latoFont,
+                    color: PDFLib.rgb(1, 1, 1)
+                });
+
+                // Draw code
+                copiedPage.drawText(ticketData.code, {
+                    x: 36,
+                    y: 433,
+                    size: 12,
+                    font: latoFont,
+                    color: PDFLib.rgb(1, 1, 1)
+                });
+
+                // Add the page to the final PDF
+                pdfDoc.addPage(copiedPage);
+            }
 
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -81,6 +116,9 @@
             displayPDF(url);
             downloadPDF(blob, 'caspe-invitation.pdf');
 
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al cargar la invitación: ' + error.message);
         }
     });
 
