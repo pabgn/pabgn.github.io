@@ -38,7 +38,7 @@
 
         try {
             // Validate code via API
-            const apiUrl = `https://script.google.com/macros/s/AKfycbwgr502kGqwbbswugaGqJv_UKgMMTc-nt76Vj_eFKY9jSKxkbc2aAo8ObEaMdIPVgEC/exec?action=findByCode&code=${code}`;
+            const apiUrl = `https://script.google.com/macros/s/AKfycbwAbCKDeXfjU3mo_tyEMr1lQvyTouoHyioUTw3uoUIpSsSm-6Zycohff1HtSz80u0B7/exec?action=findByCode&code=${code}`;
             const response = await fetch(apiUrl, {
                 method: 'GET',
                 redirect: 'follow'
