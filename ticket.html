@@ -46,7 +46,6 @@
             const data = await response.json();
 
             if (!data.success) {
-                alert('Error: ' + data.error);
                 return;
             }
 
@@ -118,7 +117,6 @@
 
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al cargar la invitación: ' + error.message);
         }
     });
 
