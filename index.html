@@ -37,38 +37,6 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      /* Mobile scroll-snap */
-      @media (max-width: 767px) {
-        .mobile-layout {
-          height: 100vh;
-          overflow-y: scroll;
-          scroll-snap-type: y mandatory;
-          -webkit-overflow-scrolling: touch;
-        }
-        .mobile-top {
-          scroll-snap-align: start;
-        }
-        .mobile-checkout {
-          scroll-snap-align: start;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-        }
-        .mobile-checkout .checkout-section {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          padding-bottom: 0;
-        }
-        .mobile-checkout .checkout-frame {
-          flex: 1;
-          border-radius: 12px 12px 0 0;
-        }
-        .mobile-checkout .checkout-frame iframe {
-          height: 100%;
-        }
-      }
-
       /* Desktop layout */
       .desktop-layout {
         display: none;
@@ -223,33 +191,30 @@
       </div>
     </div>
 
-    <!-- Mobile: stacked layout with scroll-snap -->
+    <!-- Mobile: stacked layout -->
     <div class="mobile-layout">
-      <div class="mobile-top">
-        <div class="hero">
-          <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
-          <div class="hero-overlay"></div>
+      <div class="hero">
+        <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
+        <div class="hero-overlay"></div>
+      </div>
+      <section class="info-section">
+        <h1>TORBELLINO EN LA MADRIGUERA</h1>
+        <span class="date-badge">Viernes 20 de marzo</span>
+        <p class="venue">Sala Villanos</p>
+        <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
+      </section>
+      <section class="checkout-section">
+        <h2>Consigue tu entrada</h2>
+        <div class="checkout-frame">
+          <iframe
+            src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
+            title="Comprar entradas"
+            allow="payment"
+            loading="eager">
+          </iframe>
         </div>
-        <section class="info-section">
-          <h1>TORBELLINO EN LA MADRIGUERA</h1>
-          <span class="date-badge">Viernes 20 de marzo</span>
-          <p class="venue">Sala Villanos</p>
-          <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
-        </section>
-      </div>
-      <div class="mobile-checkout">
-        <section class="checkout-section">
-          <h2>Consigue tu entrada</h2>
-          <div class="checkout-frame">
-            <iframe
-              src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
-              title="Comprar entradas"
-              allow="payment"
-              loading="eager">
-            </iframe>
-          </div>
-        </section>
-      </div>
+      </section>
+      <div class="footer">CASPE &copy; 2026</div>
     </div>
 
     <!-- Bootstrap JS -->
