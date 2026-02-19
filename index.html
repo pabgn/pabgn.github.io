@@ -43,27 +43,35 @@
       }
       @media (min-width: 768px) {
         .desktop-layout {
+          display: block;
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 2rem 2rem 0;
+        }
+        .desktop-top {
           display: flex;
-          min-height: 100vh;
+          gap: 2rem;
+          align-items: center;
+          margin-bottom: 2rem;
         }
-        .desktop-layout .poster-col {
-          width: 40%;
-          position: sticky;
-          top: 0;
-          height: 100vh;
-          overflow: hidden;
-        }
-        .desktop-layout .poster-col img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .desktop-layout .content-col {
-          width: 60%;
-          padding: 2rem 3rem;
+        .desktop-top .info-col {
+          flex: 1;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          justify-content: center;
+        }
+        .desktop-top .poster-col {
+          flex: 1;
+          overflow: hidden;
+          border-radius: 12px;
+        }
+        .desktop-top .poster-col img {
+          width: 100%;
+          display: block;
+          border-radius: 12px;
+        }
+        .desktop-bottom {
+          width: 100%;
         }
         .mobile-layout { display: none; }
       }
@@ -129,6 +137,11 @@
         margin: 0 auto;
         padding: 0 1rem 2rem;
       }
+      @media (min-width: 768px) {
+        .checkout-section {
+          max-width: 100%;
+        }
+      }
       .checkout-section h2 {
         text-align: center;
         font-size: 1.1rem;
@@ -164,18 +177,22 @@
   </head>
   <body>
 
-    <!-- Desktop: side-by-side layout -->
+    <!-- Desktop: two-column top + full-width checkout below -->
     <div class="desktop-layout">
-      <div class="poster-col">
-        <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
+      <div class="desktop-top">
+        <div class="info-col">
+          <section class="info-section">
+            <h1>TORBELLINO EN LA MADRIGUERA</h1>
+            <span class="date-badge">Viernes 20 de marzo</span>
+            <p class="venue">Sala Villanos</p>
+            <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
+          </section>
+        </div>
+        <div class="poster-col">
+          <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
+        </div>
       </div>
-      <div class="content-col">
-        <section class="info-section">
-          <h1>TORBELLINO EN LA MADRIGUERA</h1>
-          <span class="date-badge">Viernes 20 de marzo</span>
-          <p class="venue">Sala Villanos</p>
-          <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
-        </section>
+      <div class="desktop-bottom">
         <section class="checkout-section">
           <h2>Consigue tu entrada</h2>
           <div class="checkout-frame">
