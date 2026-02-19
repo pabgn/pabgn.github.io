@@ -1,70 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASPE - CARNAVAL EN LA MADRIGUERA 🐇◼️ | 13 de febrero</title>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Redirect -->
-    <meta http-equiv="refresh" content="0; URL=https://www.fourvenues.com/cristo-social-club/D7WC">
+    <title>CASPE — TORBELLINO EN LA MADRIGUERA 🌀🐇 | 20 de marzo</title>
 
     <!-- Primary Meta Tags -->
-    <meta name="title" content="CASPE - CARNAVAL EN LA MADRIGUERA 🐇◼️ | 13 de febrero">
-    <meta name="description" content="¿Quién serás cuando caigas? Este 13 de febrero, el Carnaval no se celebra fuera, se vive abajo. Las paredes de @cristosocialclub se transforman en el refugio de los que buscan algo más que un disfraz. En la madriguera, las reglas se rompen y el tiempo se detiene.">
+    <meta name="title" content="CASPE — TORBELLINO EN LA MADRIGUERA 🌀🐇 | 20 de marzo">
+    <meta name="description" content="Este viernes 20 de marzo, CASPE vuelve a Sala Villanos con una noche pensada para perder el control y dejarse llevar por el techno y el mejor ambiente. Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera.">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.fourvenues.com/cristo-social-club/D7WC">
-    <meta property="og:title" content="CASPE - CARNAVAL EN LA MADRIGUERA 🐇◼️ | 13 de febrero">
-    <meta property="og:description" content="¿Quién serás cuando caigas? Este 13 de febrero, el Carnaval no se celebra fuera, se vive abajo. Las paredes de @cristosocialclub se transforman en el refugio de los que buscan algo más que un disfraz. En la madriguera, las reglas se rompen y el tiempo se detiene.">
-    <meta property="og:image" content="caspe_feb.jpg">
+    <meta property="og:url" content="https://pabgn.github.io/">
+    <meta property="og:title" content="CASPE — TORBELLINO EN LA MADRIGUERA 🌀🐇 | 20 de marzo">
+    <meta property="og:description" content="Este viernes 20 de marzo, CASPE vuelve a Sala Villanos con una noche pensada para perder el control y dejarse llevar por el techno y el mejor ambiente. Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera.">
+    <meta property="og:image" content="https://pabgn.github.io/caspe_march.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.fourvenues.com/cristo-social-club/D7WC">
-    <meta property="twitter:title" content="CASPE - CARNAVAL EN LA MADRIGUERA 🐇◼️ | 13 de febrero">
-    <meta property="twitter:description" content="¿Quién serás cuando caigas? Este 13 de febrero, el Carnaval no se celebra fuera, se vive abajo. Las paredes de @cristosocialclub se transforman en el refugio de los que buscan algo más que un disfraz. En la madriguera, las reglas se rompen y el tiempo se detiene.">
-    <meta property="twitter:image" content="caspe_feb.jpg">
-    
+    <meta property="twitter:url" content="https://pabgn.github.io/">
+    <meta property="twitter:title" content="CASPE — TORBELLINO EN LA MADRIGUERA 🌀🐇 | 20 de marzo">
+    <meta property="twitter:description" content="Este viernes 20 de marzo, CASPE vuelve a Sala Villanos con una noche pensada para perder el control y dejarse llevar por el techno y el mejor ambiente. Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera.">
+    <meta property="twitter:image" content="https://pabgn.github.io/caspe_march.jpg">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
-            color: #333;
-            text-align: center;
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background-color: #0a0a0a;
+        color: #f0f0f0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Desktop layout */
+      .desktop-layout {
+        display: none;
+      }
+      @media (min-width: 768px) {
+        .desktop-layout {
+          display: flex;
+          min-height: 100vh;
         }
-        .container {
-            max-width: 600px;
-            padding: 20px;
+        .desktop-layout .poster-col {
+          width: 40%;
+          position: sticky;
+          top: 0;
+          height: 100vh;
+          overflow: hidden;
         }
-        h1 {
-            color: #222;
+        .desktop-layout .poster-col img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
-        p {
-            margin: 20px 0;
+        .desktop-layout .content-col {
+          width: 60%;
+          padding: 2rem 3rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
-        .redirect-link {
-            color: #0066cc;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .redirect-link:hover {
-            text-decoration: underline;
-        }
+        .mobile-layout { display: none; }
+      }
+
+      /* Hero (mobile only) */
+      .hero {
+        position: relative;
+        width: 100%;
+        max-height: 50vh;
+        overflow: hidden;
+      }
+      .hero img {
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        max-height: 50vh;
+      }
+      .hero-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(transparent, #0a0a0a);
+      }
+
+      /* Info section */
+      .info-section {
+        text-align: center;
+        padding: 1.5rem 1rem 1rem;
+      }
+      .info-section h1 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 0.25rem;
+      }
+      .info-section .date-badge {
+        display: inline-block;
+        background: #fff;
+        color: #0a0a0a;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .info-section .venue {
+        color: #aaa;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+      .info-section .tagline {
+        font-size: 0.95rem;
+        color: #ccc;
+        max-width: 500px;
+        margin: 0 auto 1rem;
+        line-height: 1.5;
+      }
+
+      /* Checkout section */
+      .checkout-section {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 1rem 2rem;
+      }
+      .checkout-section h2 {
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        letter-spacing: 0.5px;
+      }
+      .checkout-frame {
+        width: 100%;
+        border: 1px solid #222;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #111;
+      }
+      .checkout-frame iframe {
+        width: 100%;
+        height: 1400px;
+        margin-top: -170px;
+        border: none;
+        display: block;
+        background: #fff;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        color: #555;
+        font-size: 0.75rem;
+        border-top: 1px solid #1a1a1a;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>CASPE - CARNAVAL EN LA MADRIGUERA 🐇◼️</h1>
-        <p>¿Quién serás cuando caigas?</p>
-        <p>Este 13 de febrero, el Carnaval no se celebra fuera, se vive abajo. Las paredes de @cristosocialclub se transforman en el refugio de los que buscan algo más que un disfraz. En la madriguera, las reglas se rompen y el tiempo se detiene.</p>
-        <p>Redirecting to event page...</p>
-        <p>If you are not redirected automatically, <a class="redirect-link" href="https://www.fourvenues.com/cristo-social-club/D7WC">click here</a>.</p>
+  </head>
+  <body>
+
+    <!-- Desktop: side-by-side layout -->
+    <div class="desktop-layout">
+      <div class="poster-col">
+        <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
+      </div>
+      <div class="content-col">
+        <section class="info-section">
+          <h1>TORBELLINO EN LA MADRIGUERA</h1>
+          <span class="date-badge">Viernes 20 de marzo</span>
+          <p class="venue">Sala Villanos</p>
+          <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
+        </section>
+        <section class="checkout-section">
+          <h2>Consigue tu entrada</h2>
+          <div class="checkout-frame">
+            <iframe
+              src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
+              title="Comprar entradas"
+              allow="payment"
+              loading="eager">
+            </iframe>
+          </div>
+        </section>
+        <div class="footer">CASPE &copy; 2026</div>
+      </div>
     </div>
-</body>
+
+    <!-- Mobile: stacked layout -->
+    <div class="mobile-layout">
+      <div class="hero">
+        <img src="caspe_march.jpg" alt="CASPE — Torbellino en la Madriguera — 20 de marzo">
+        <div class="hero-overlay"></div>
+      </div>
+      <section class="info-section">
+        <h1>TORBELLINO EN LA MADRIGUERA</h1>
+        <span class="date-badge">Viernes 20 de marzo</span>
+        <p class="venue">Sala Villanos</p>
+        <p class="tagline">Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera. Pierde el control y déjate llevar por el techno y el mejor ambiente.</p>
+      </section>
+      <section class="checkout-section">
+        <h2>Consigue tu entrada</h2>
+        <div class="checkout-frame">
+          <iframe
+            src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
+            title="Comprar entradas"
+            allow="payment"
+            loading="eager">
+          </iframe>
+        </div>
+      </section>
+      <div class="footer">CASPE &copy; 2026</div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
 </html>
