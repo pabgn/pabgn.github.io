@@ -86,36 +86,41 @@ article[table-row-product] {
     padding: 0.4rem 0.6rem !important;
 }
 
-/* Shopping cart / aside */
+/* Shopping cart / aside - white background */
 .shopping-cart {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid #333 !important;
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
     border-radius: 8px !important;
     padding: 1rem !important;
 }
-.shopping-cart h3 {
-    color: #f0f0f0 !important;
+.shopping-cart h3,
+.shopping-cart .h1 {
+    color: #111 !important;
 }
 .shopping-cart h4 {
-    color: #888 !important;
+    color: #666 !important;
 }
 .shopping-cart .cart-row,
 .shopping-cart .cart-row .title,
 .shopping-cart .cart-row .amount,
 .shopping-cart .cart-row .price {
-    color: #ddd !important;
+    color: #333 !important;
 }
 .shopping-cart .cart-row.bold,
 .shopping-cart .cart-row.bold .title,
 .shopping-cart .cart-row.bold .price {
-    color: #fff !important;
+    color: #111 !important;
+}
+.shopping-cart .currency,
+.shopping-cart .currency__symbol {
+    color: #111 !important;
 }
 .shopping-cart-footer .text-muted {
-    color: #aaa !important;
+    color: #666 !important;
 }
 .shopping-cart-footer small,
 .shopping-cart-footer .small {
-    color: #999 !important;
+    color: #777 !important;
 }
 
 /* Primary button - white */
@@ -210,11 +215,18 @@ a:hover {
 }
 
 /* Buyer form */
+buyer-data,
+buyer-data p,
+buyer-data span,
+buyer-data div,
+buyer-data .form-text {
+    color: #f0f0f0 !important;
+}
 .buyer-grid h3 {
     color: #f0f0f0 !important;
 }
 .buyer-grid .form-item label {
-    color: #ccc !important;
+    color: #f0f0f0 !important;
 }
 .buyer-grid .form-item label .text-danger {
     color: #DF201A !important;
@@ -262,6 +274,24 @@ a:hover {
 }
 .payment-method--extracost .text-muted {
     color: #aaa !important;
+}
+/* Payment method images - white background */
+.payment-method--img,
+.payment-method--img img {
+    background: #fff !important;
+    border-radius: 4px !important;
+    padding: 2px !important;
+}
+/* Payment buttons - TARJETA green, PAYPAL blue */
+.payment-method-row-tpv .btn--payment-method {
+    background: #2ecc71 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+.payment-method-row-paypal .btn--payment-method {
+    background: #0070ba !important;
+    color: #fff !important;
+    font-weight: 700 !important;
 }
 
 /* Step footer */
