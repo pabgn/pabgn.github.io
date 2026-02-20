@@ -8,10 +8,6 @@ html body {
 .event-content-wrapper {
     background: transparent;
 }
-.product {
-    background: transparent;
-    border-color: #222 !important;
-}
 .aside-box {
     background: transparent;
 }
@@ -28,19 +24,13 @@ html body {
 }
 
 /* Language links - hide */
-[_nghost-dfb-c15], lang-links {
+lang-links {
     display: none !important;
 }
 
 /* Warning messages */
-.warning-container .alert {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #333;
-    border-radius: 8px;
-    color: #ccc;
-}
-.warning-container .alert h4 {
-    color: #f0f0f0;
+.warning-container {
+    display: none !important;
 }
 
 /* Section headings */
@@ -49,52 +39,57 @@ html body {
     font-weight: 700 !important;
 }
 
-/* Product cards */
-.product-list .product {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid #222 !important;
+/* Product cards - white background with dark text */
+.product-list .product,
+article[table-row-product] {
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
     border-radius: 8px !important;
     margin-bottom: 0.5rem;
 }
-.product h2 {
-    color: #fff !important;
+.product h2,
+.product .main h2 {
+    color: #111 !important;
     font-weight: 600 !important;
 }
 .product .product-detail,
-.product .product-detail div {
-    color: #aaa !important;
+.product .product-detail div,
+.product .product-detail p,
+.product .product-detail span {
+    color: #555 !important;
 }
-.product .fs90 {
-    color: #888 !important;
+.product .fs90,
+.product .fs90 span,
+.product .font-weight-light {
+    color: #777 !important;
 }
 .product .font-weight-normal {
-    color: #ccc !important;
+    color: #333 !important;
 }
-
-/* Prices */
-.currency {
-    color: #fff !important;
+.product .price,
+.product .currency {
+    color: #111 !important;
     font-weight: 700 !important;
 }
 
 /* Sold out */
-.text-danger {
-    color: #ff4444 !important;
+.product .text-danger {
+    color: #DF201A !important;
 }
 
 /* Select dropdowns */
 .product select {
-    background: #1a1a1a !important;
-    color: #f0f0f0 !important;
-    border: 1px solid #333 !important;
+    background: #f5f5f5 !important;
+    color: #111 !important;
+    border: 1px solid #ccc !important;
     border-radius: 6px !important;
     padding: 0.4rem 0.6rem !important;
 }
 
 /* Shopping cart / aside */
 .shopping-cart {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid #222 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid #333 !important;
     border-radius: 8px !important;
     padding: 1rem !important;
 }
@@ -104,11 +99,29 @@ html body {
 .shopping-cart h4 {
     color: #888 !important;
 }
+.shopping-cart .cart-row,
+.shopping-cart .cart-row .title,
+.shopping-cart .cart-row .amount,
+.shopping-cart .cart-row .price {
+    color: #ddd !important;
+}
+.shopping-cart .cart-row.bold,
+.shopping-cart .cart-row.bold .title,
+.shopping-cart .cart-row.bold .price {
+    color: #fff !important;
+}
+.shopping-cart-footer .text-muted {
+    color: #aaa !important;
+}
+.shopping-cart-footer small,
+.shopping-cart-footer .small {
+    color: #999 !important;
+}
 
-/* Primary button */
+/* Primary button - white */
 .btn--main, .btn--main:hover {
-    background: #DF201A !important;
-    color: white !important;
+    background: #fff !important;
+    color: #0a0a0a !important;
     border: none !important;
     border-radius: 8px !important;
     font-weight: 700 !important;
@@ -117,11 +130,30 @@ html body {
     transition: opacity 0.2s !important;
 }
 .btn--main:hover {
-    opacity: 0.9 !important;
+    opacity: 0.85 !important;
 }
 .btn--main:disabled {
     background: #555 !important;
+    color: #999 !important;
     opacity: 0.6 !important;
+}
+/* Payment method buttons */
+.btn--payment-method {
+    background: #fff !important;
+    color: #0a0a0a !important;
+}
+
+/* Inverse button (back) */
+.btn--inverse {
+    background: transparent !important;
+    color: #aaa !important;
+    border: 1px solid #444 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.5rem !important;
+}
+.btn--inverse:hover {
+    color: #fff !important;
+    border-color: #888 !important;
 }
 
 /* PayPal button override */
@@ -129,11 +161,11 @@ html body {
 .paypal-button.paypal-button-color-gold,
 .paypal-button-row.paypal-button-color-gold .menu-button,
 .paypal-button-container .paypal-button-row .paypal-button.paypal-button-color-gold:hover {
-    background: #DF201A !important;
-    color: white !important;
+    background: #fff !important;
+    color: #0a0a0a !important;
 }
 
-/* Modal */
+/* Modal (card payment) */
 .modal-content {
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     background-color: #111 !important;
@@ -141,6 +173,32 @@ html body {
 }
 .modal-content .modal-title {
     color: #fff !important;
+}
+.modal-content .modal-header {
+    border-bottom-color: #333 !important;
+}
+.modal-content .modal-footer {
+    border-top-color: #333 !important;
+}
+.modal-content .close {
+    color: #fff !important;
+}
+.modal-content label {
+    color: #ccc !important;
+}
+.modal-content .form-control {
+    background: #1a1a1a !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #444 !important;
+}
+.modal-content .input-group-text {
+    background: #222 !important;
+    color: #aaa !important;
+    border: 1px solid #444 !important;
+}
+.modal-content small,
+.modal-content .font-weight-light {
+    color: #999 !important;
 }
 
 /* Links */
@@ -151,19 +209,59 @@ a:hover {
     color: #ff4444 !important;
 }
 
-/* Inputs (for buyer form) */
-input, textarea {
+/* Buyer form */
+.buyer-grid h3 {
+    color: #f0f0f0 !important;
+}
+.buyer-grid .form-item label {
+    color: #ccc !important;
+}
+.buyer-grid .form-item label .text-danger {
+    color: #DF201A !important;
+}
+.buyer-grid input[type="text"],
+.buyer-grid input[type="email"],
+.buyer-grid input[type="tel"],
+.buyer-grid textarea {
     background: #1a1a1a !important;
     color: #f0f0f0 !important;
-    border: 1px solid #333 !important;
+    border: 1px solid #444 !important;
     border-radius: 6px !important;
 }
-input:focus, textarea:focus {
-    border-color: #DF201A !important;
+.buyer-grid input:focus,
+.buyer-grid textarea:focus {
+    border-color: #fff !important;
     outline: none !important;
 }
-label {
+.buyer-grid input::placeholder {
+    color: #666 !important;
+}
+
+/* Conditions / checkboxes */
+.conditions-label,
+.conditions-label span {
     color: #ccc !important;
+}
+.conditions .form-check-label {
+    color: #bbb !important;
+}
+.conditions .text-secondary {
+    color: #DF201A !important;
+}
+
+/* Payment methods section */
+.payment-method {
+    border-color: #333 !important;
+}
+.payment-method--name {
+    color: #f0f0f0 !important;
+}
+.payment-method--extracost,
+.payment-method--extracost span {
+    color: #888 !important;
+}
+.payment-method--extracost .text-muted {
+    color: #aaa !important;
 }
 
 /* Step footer */
@@ -171,7 +269,34 @@ label {
     text-align: center;
 }
 
-/* General text */
+/* Nav buttons (back/continue) */
+.nav-buttons {
+    border-top: 1px solid #222 !important;
+    padding-top: 1rem !important;
+}
+
+/* General text overrides */
 .font-weight-light {
     color: #888 !important;
+}
+.text-muted {
+    color: #888 !important;
+}
+.text-secondary {
+    color: #DF201A !important;
+}
+
+/* Card fields container */
+.card_container {
+    background: transparent !important;
+}
+.card_container .form-control {
+    background: #1a1a1a !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #444 !important;
+}
+
+/* Timer warning */
+timer-warning {
+    color: #ccc !important;
 }
