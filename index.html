@@ -24,9 +24,6 @@
     <meta property="twitter:description" content="Este viernes 20 de marzo, CASPE vuelve a Sala Villanos con una noche pensada para perder el control y dejarse llevar por el techno y el mejor ambiente. Un torbellino de sonido, luces y energía que te arrastra directo a la madriguera.">
     <meta property="twitter:image" content="https://pabgn.github.io/caspe_march.jpg">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
     <style>
       * { box-sizing: border-box; }
       body {
@@ -149,20 +146,8 @@
         margin-bottom: 0.75rem;
         letter-spacing: 0.5px;
       }
-      .checkout-frame {
+      .checkout-widget {
         width: 100%;
-        border: 1px solid #222;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #111;
-      }
-      .checkout-frame iframe {
-        width: 100%;
-        height: 1900px;
-        margin-top: -100px;
-        border: none;
-        display: block;
-        background: #fff;
       }
 
       /* Footer */
@@ -195,14 +180,7 @@
       <div class="desktop-bottom">
         <section class="checkout-section">
           <h2>Consigue tu entrada</h2>
-          <div class="checkout-frame">
-            <iframe
-              src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
-              title="Comprar entradas"
-              allow="payment"
-              loading="eager">
-            </iframe>
-          </div>
+          <div class="checkout-widget" id="desktop-widget"></div>
         </section>
         <div class="footer">CASPE &copy; 2026</div>
       </div>
@@ -222,20 +200,42 @@
       </section>
       <section class="checkout-section">
         <h2>Consigue tu entrada</h2>
-        <div class="checkout-frame">
-          <iframe
-            src="https://checkout.notikumi.com/es/sell-session/checkout?content=2026%2F3%2F20%2Fcaspe&channel=notikumi&layout=checkout&headless=true&lang=es&host=https%3A%2F%2Fwww.notikumi.com&us=ig&um=social&ucn=link_in_bio"
-            title="Comprar entradas"
-            allow="payment"
-            loading="eager">
-          </iframe>
-        </div>
+        <div class="checkout-widget" id="mobile-widget"></div>
       </section>
       <div class="footer">CASPE &copy; 2026</div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Notikumi widget -->
+    <script type="text/javascript" class="___ntk-widget">
+      var _ntk = _ntk || [];
+      _ntk.push({
+          channel: 'notikumi',
+          content: '2026/3/20/caspe',
+          type: 1,
+          layout: 'checkout',
+          resizer: true,
+          lang: 'es',
+          customCss: 'https://pabgn.github.io/caspe-widget.css'
+      });
+    </script>
+    <script type="text/javascript">
+      (function () {
+          var nw = document.createElement('script'); nw.type = 'text/javascript'; nw.async = true;
+          nw.src = 'https://cdn.notikumi.com/js/widget/current/widget.min.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(nw, s);
+      })();
+
+      // Move the widget iframe into the correct container once it's created
+      var observer = new MutationObserver(function(mutations) {
+        var iframe = document.querySelector('body > iframe._widget_notikumi');
+        if (iframe) {
+          var isDesktop = window.matchMedia('(min-width: 768px)').matches;
+          var target = document.getElementById(isDesktop ? 'desktop-widget' : 'mobile-widget');
+          target.appendChild(iframe);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, { childList: true });
+    </script>
   </body>
 </html>
