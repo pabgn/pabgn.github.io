@@ -38,6 +38,9 @@ lang-links {
     color: #f0f0f0 !important;
     font-weight: 700 !important;
 }
+.product-list > h3.h1 {
+    display: none !important;
+}
 
 /* Product cards - white background with dark text */
 .product-list .product,
@@ -265,7 +268,7 @@ buyer-data .form-text {
 /* Conditions / checkboxes */
 .conditions-label,
 .conditions-label span {
-    color: #ccc !important;
+    color: #333 !important;
 }
 .conditions .form-check-label {
     color: #bbb !important;
@@ -280,6 +283,8 @@ buyer-data .form-text {
 }
 .payment-method--name {
     color: #f0f0f0 !important;
+    font-weight: normal !important;
+    margin-left: 20px !important;
 }
 .payment-method--extracost,
 .payment-method--extracost span {
