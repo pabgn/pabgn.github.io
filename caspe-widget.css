@@ -289,6 +289,7 @@ buyer-data .form-text {
 .payment-method--extracost,
 .payment-method--extracost span {
     color: #888 !important;
+    margin-left: 20px !important;
 }
 .payment-method--extracost .text-muted {
     color: #aaa !important;
