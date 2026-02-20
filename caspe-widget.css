@@ -32,6 +32,9 @@ lang-links {
 .warning-container {
     display: none !important;
 }
+.alert-info {
+    display: none !important;
+}
 
 /* Section headings */
 .h1, h3.h1 {
