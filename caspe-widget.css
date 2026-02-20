@@ -1,0 +1,177 @@
+html body {
+    background: transparent;
+    color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Main containers */
+.event-content-wrapper {
+    background: transparent;
+}
+.product {
+    background: transparent;
+    border-color: #222 !important;
+}
+.aside-box {
+    background: transparent;
+}
+.buyer-grid, .buyer-data {
+    background: transparent;
+}
+.step-2-footer-legacy {
+    background: transparent;
+}
+
+/* Header - hide it since we already show event info */
+.event-header-wrapper {
+    display: none !important;
+}
+
+/* Language links - hide */
+[_nghost-dfb-c15], lang-links {
+    display: none !important;
+}
+
+/* Warning messages */
+.warning-container .alert {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #ccc;
+}
+.warning-container .alert h4 {
+    color: #f0f0f0;
+}
+
+/* Section headings */
+.h1, h3.h1 {
+    color: #f0f0f0 !important;
+    font-weight: 700 !important;
+}
+
+/* Product cards */
+.product-list .product {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid #222 !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem;
+}
+.product h2 {
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+.product .product-detail,
+.product .product-detail div {
+    color: #aaa !important;
+}
+.product .fs90 {
+    color: #888 !important;
+}
+.product .font-weight-normal {
+    color: #ccc !important;
+}
+
+/* Prices */
+.currency {
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+
+/* Sold out */
+.text-danger {
+    color: #ff4444 !important;
+}
+
+/* Select dropdowns */
+.product select {
+    background: #1a1a1a !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #333 !important;
+    border-radius: 6px !important;
+    padding: 0.4rem 0.6rem !important;
+}
+
+/* Shopping cart / aside */
+.shopping-cart {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid #222 !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+}
+.shopping-cart h3 {
+    color: #f0f0f0 !important;
+}
+.shopping-cart h4 {
+    color: #888 !important;
+}
+
+/* Primary button */
+.btn--main, .btn--main:hover {
+    background: #DF201A !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+    transition: opacity 0.2s !important;
+}
+.btn--main:hover {
+    opacity: 0.9 !important;
+}
+.btn--main:disabled {
+    background: #555 !important;
+    opacity: 0.6 !important;
+}
+
+/* PayPal button override */
+.paypal-button-container .paypal-button-row .paypal-button.paypal-button-color-gold,
+.paypal-button.paypal-button-color-gold,
+.paypal-button-row.paypal-button-color-gold .menu-button,
+.paypal-button-container .paypal-button-row .paypal-button.paypal-button-color-gold:hover {
+    background: #DF201A !important;
+    color: white !important;
+}
+
+/* Modal */
+.modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background-color: #111 !important;
+    color: #f0f0f0 !important;
+}
+.modal-content .modal-title {
+    color: #fff !important;
+}
+
+/* Links */
+a {
+    color: #DF201A !important;
+}
+a:hover {
+    color: #ff4444 !important;
+}
+
+/* Inputs (for buyer form) */
+input, textarea {
+    background: #1a1a1a !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #333 !important;
+    border-radius: 6px !important;
+}
+input:focus, textarea:focus {
+    border-color: #DF201A !important;
+    outline: none !important;
+}
+label {
+    color: #ccc !important;
+}
+
+/* Step footer */
+.step-1-footer {
+    text-align: center;
+}
+
+/* General text */
+.font-weight-light {
+    color: #888 !important;
+}
